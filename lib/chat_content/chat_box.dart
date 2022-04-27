@@ -47,23 +47,19 @@ class _ChatBoxState extends State<ChatBox> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     switch (state) {
-      //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume
       case AppLifecycleState.resumed:
         print("应用进入前台======");
-        chatMessagesController.reconnect();
+        // chatMessagesController.reconnect();
         break;
-      // 注意：这个状态切换到 前后台 会触发，所以流程应该是先冻结窗口，然后停止UI
+      case AppLifecycleState.paused:
+        print("应用处于不可见状态 后台======");
+        // chatMessagesController.close();
+        break;
       case AppLifecycleState.inactive:
         print("应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
         break;
-      //当前页面即将退出
       case AppLifecycleState.detached:
         print("当前页面即将退出======");
-        break;
-      // 应用程序处于不可见状态
-      case AppLifecycleState.paused:
-        print("应用处于不可见状态 后台======");
-        chatMessagesController.close();
         break;
     }
   }

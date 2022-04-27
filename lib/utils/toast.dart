@@ -23,7 +23,6 @@ toast(String str, {int delay = 4}) {
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                 child: Text(
                   str,
-                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             ),

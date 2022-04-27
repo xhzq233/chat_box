@@ -12,34 +12,29 @@ class ChatRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (msg.owned) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const SizedBox(height: 9,),
-          MessageBubble(
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
+          child: MessageBubble(
             content: msg.content,
           ),
-          const SizedBox(height: 9,),
-        ],
+        ),
       );
     } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 9,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UserAvatar(name: msg.sender),
-              Flexible(
-                  child: MessageBubble.others(
-                content: msg.content,
-              )),
-            ],
-          ),
-          const SizedBox(height: 9,),
-        ],
+      return Padding(
+        padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            UserAvatar(name: msg.sender),
+            Flexible(
+                child: MessageBubble.others(
+              content: msg.content,
+            )),
+          ],
+        ),
       );
     }
   }

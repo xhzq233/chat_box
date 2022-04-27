@@ -88,7 +88,7 @@ class ChatMessagesController {
       for (int i = 0; i < list.length; ++i) {
         final _i = list[i];
         if (_messages.first.time.difference(_i.time).inMinutes > 10) {
-          final dateTime = _i.time;
+          final dateTime = _messages.first.time;
           _messages.insert(
               0,
               ChatMessage(
