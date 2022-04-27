@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../global.dart';
@@ -20,6 +21,7 @@ class ChatMessagesController {
   String get token => Global.token;
 
   ChatMessagesController({required this.socket, required this.context}) {
+    Uint8List;
     socket.listen(receive, onError: (e) {
       toast('error while listening: $e');
       Navigator.pop(context);

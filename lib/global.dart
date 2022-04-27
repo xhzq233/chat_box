@@ -18,6 +18,16 @@ class Global {
   static const cbOnMyBubble = Colors.black;
   static const cbWarning = Colors.pink;
   static const cbTextFieldBackground = Color.fromARGB(255, 27, 27, 27);
+  static final cbScheme = const ColorScheme.dark().copyWith(
+    primary: cbPrimaryColor,
+    background: cbBackground,
+    onPrimary: cbOnMyBubble,
+    secondary: cbOthersBubbleBackground,
+    onBackground: cbOnBackground,
+    onSurface: cbOnOthersBubble,
+    error: cbTextFieldBackground,
+    onError: cbWarning,
+  );
 
   static final theme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: cbBackground,
@@ -118,16 +128,7 @@ class Global {
           fontSize: 12,
           decoration: TextDecoration.none),
     ),
-    colorScheme: const ColorScheme.dark().copyWith(
-      primary: cbPrimaryColor,
-      background: cbBackground,
-      onPrimary: cbOnMyBubble,
-      secondary: cbOthersBubbleBackground,
-      onBackground: cbOnBackground,
-      onSurface: cbOnOthersBubble,
-      error: cbTextFieldBackground,
-      onError: cbWarning,
-    ),
+    colorScheme: cbScheme,
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 }

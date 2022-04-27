@@ -78,7 +78,7 @@ class _ChatBoxState extends State<ChatBox> with WidgetsBindingObserver {
           controller: _textEditingController,
           autocorrect: false,
           decoration: InputDecoration(
-            fillColor: Global.cbPrimaryColor,
+              fillColor: Global.cbPrimaryColor,
               hintText: "Message",
               prefixIcon: const Icon(Icons.message),
               suffix: ElevatedButton(
@@ -97,42 +97,45 @@ class _ChatBoxState extends State<ChatBox> with WidgetsBindingObserver {
       appBar: AppBar(
         title: const Text('Chat Group'),
       ),
-      body: AutoUnFocusWrap(
-          focusNode: _node,
-          child: Column(
-            children: [
-              Expanded(
-                  child: ListView.builder(
-                      itemCount: len + 1,
-                      reverse: true, //double reverse
-                      itemBuilder: (ctx, index) {
-                        if (index == len) {
-                          if (_end) {
-                            return const Text('no more history');
-                          } else {
-                            chatMessagesController.request();
-                            return const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          }
+      body: Column(
+        children: [
+          Expanded(
+            child: AutoUnFocusWrap(
+                focusNode: _node,
+                child: ListView.builder(
+                    itemCount: len + 1,
+                    reverse: true, //double reverse
+                    itemBuilder: (ctx, index) {
+                      if (index == len) {
+                        if (_end) {
+                          return const Text('no more history');
                         } else {
-                          final msg = chatMessagesController.messageOf(len - 1 - index);
-                          if (msg.isHint) {
-                            return HintRow(content: msg.content);
-                          } else if (msg.isImage) {
-                            return Container();
-                          } else {
-                            return ChatRow(msg: msg);
-                          }
+                          chatMessagesController.request();
+                          return const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                         }
-                        //double reverse
-                      })),
-              _textField
-            ],
-          )),
+                      } else {
+                        final msg = chatMessagesController.messageOf(len - 1 - index);
+                        if (msg.isHint) {
+                          return HintRow(content: msg.content);
+                        } else if (msg.isImage) {
+                          return Container();
+                        } else {
+                          return ChatRow(
+                            msg: msg,
+                          );
+                        }
+                      }
+                      //double reverse
+                    })),
+          ),
+          _textField
+        ],
+      ),
     );
   }
 }
