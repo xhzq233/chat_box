@@ -55,7 +55,7 @@ class WelcomePage extends StatelessWidget {
                                       ChatBox(socket: socket)));
                         } catch (e) {
                           Loading.hide();
-                          toast('err:$e');
+                          toast('Error');
                         }
                       },
                       child: const Text('connect')),

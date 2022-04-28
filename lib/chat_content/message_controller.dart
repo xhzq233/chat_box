@@ -4,31 +4,21 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../global.dart';
 import '../model/message.dart';
 import 'package:http/http.dart' as http;
 import 'package:chat_box/utils/loading.dart';
-
+import '../utils/platform_api/platform_api.dart';
 import '../utils/toast.dart';
 
-class ChatMessagesController {
-  WebSocket socket;
-  final BuildContext context;
+class ChatMessagesController extends WidgetsBindingObserver {
+  late WebSocket socket;
+  late BuildContext context;
 
   String get token => Global.token;
-
-  ChatMessagesController({required this.socket, required this.context}) {
-    Uint8List;
-    socket.listen(receive, onError: (e) {
-      toast('error while listening: $e');
-      Navigator.pop(context);
-    }, onDone: () {
-      toast('connection is done');
-    }, cancelOnError: true);
-  }
 
   late final List<ChatMessage> _messages = [
     ChatMessage(sender: '', id: 0, time: DateTime.now(), content: '${Global.sender} joined the chat')
@@ -41,10 +31,22 @@ class ChatMessagesController {
   bool end = false;
   bool _getting = false;
 
-  void receive(dynamic data) {
+  void bindObserver() {
+    WidgetsBinding.instance?.addObserver(this);
+  }
+
+  void removeObserver() {
+    WidgetsBinding.instance?.removeObserver(this);
+  }
+
+  void _receive(dynamic data) {
     if (data is String) {
       if (data.startsWith('{')) {
-        _messages.add(ChatMessage.fromJson(jsonDecode(data)));
+        final msg = ChatMessage.fromJson(jsonDecode(data));
+        _messages.add(msg);
+        if (_isOnBackground) {
+          PlatformApi.notification(msg.id, msg.sender, msg.content, 'haha');
+        }
       } else {
         //hint
         _messages.add(ChatMessage(sender: '', id: 0, time: DateTime.now(), content: data));
@@ -55,21 +57,24 @@ class ChatMessagesController {
     }
   }
 
-  void reconnect() async {
-    toast('connection interrupted, reconnecting...');
+  void startListen() {
+    socket.listen(_receive, onError: (e) {
+      toast('error while listening: $e');
+      Navigator.pop(context);
+    }, onDone: () {
+      toast('connection is done');
+    }, cancelOnError: true);
+  }
+
+  void connect() async {
     Loading.show();
     try {
       socket = await WebSocket.connect('wss://${Global.host}', headers: {'Auth': token});
-      socket.listen(receive, onError: (e) {
-        toast('error while listening: $e');
-        Navigator.pop(context);
-      }, onDone: () {
-        toast('connection is done');
-      }, cancelOnError: true);
+      startListen();
       Loading.hide();
     } catch (e) {
       Loading.hide();
-      toast('reconnection err with $e');
+      toast('connection err with $e');
       Navigator.pop(context);
     }
   }
@@ -109,5 +114,28 @@ class ChatMessagesController {
 
   void close() {
     socket.close(1001, 'client closed socket');
+  }
+
+  bool _isOnBackground = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("应用进入前台======");
+        _isOnBackground = false;
+        break;
+      case AppLifecycleState.paused:
+        print("应用处于不可见状态 后台======");
+        _isOnBackground = true;
+        break;
+      case AppLifecycleState.inactive:
+        print("应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
+        break;
+      case AppLifecycleState.detached:
+        print("当前页面即将退出======");
+        break;
+    }
   }
 }

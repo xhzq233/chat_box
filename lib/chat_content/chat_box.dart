@@ -1,6 +1,7 @@
 /// chat_box - chat_box
 /// Created by xhz on 22/04/2022
 
+import 'dart:developer';
 import 'dart:io';
 import 'package:chat_box/chat_content/hint_row.dart';
 import 'package:chat_box/chat_content/message_controller.dart';
@@ -19,9 +20,12 @@ class ChatBox extends StatefulWidget {
   _ChatBoxState createState() => _ChatBoxState();
 }
 
-class _ChatBoxState extends State<ChatBox> with WidgetsBindingObserver {
-  late final ChatMessagesController chatMessagesController =
-      ChatMessagesController(socket: widget.socket, context: context);
+class _ChatBoxState extends State<ChatBox> {
+  late final ChatMessagesController chatMessagesController = ChatMessagesController()
+    ..socket = widget.socket
+    ..context = context
+    ..startListen()
+    ..bindObserver();
 
   final TextEditingController _textEditingController = TextEditingController();
   final _node = FocusNode();
@@ -31,43 +35,11 @@ class _ChatBoxState extends State<ChatBox> with WidgetsBindingObserver {
   int get len => chatMessagesController.len;
 
   @override
-  void initState() {
-    WidgetsBinding.instance?.addObserver(this);
-    super.initState();
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    log('call dispose');
     chatMessagesController.close();
+    chatMessagesController.removeObserver();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    switch (state) {
-      case AppLifecycleState.resumed:
-        print("应用进入前台======");
-        // chatMessagesController.reconnect();
-        break;
-      case AppLifecycleState.paused:
-        print("应用处于不可见状态 后台======");
-        // chatMessagesController.close();
-        break;
-      case AppLifecycleState.inactive:
-        print("应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
-        break;
-      case AppLifecycleState.detached:
-        print("当前页面即将退出======");
-        break;
-    }
-  }
-
-  @override
-  Future<bool> didPopRoute() async {
-    chatMessagesController.close();
-    return false;
   }
 
   Widget get _textField => Padding(
