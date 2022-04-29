@@ -21,7 +21,7 @@ class ChatRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             color: msg.owned ? Global.cbMyBubbleBackground : Global.cbOthersBubbleBackground,
         ),
-        child: SelectAllText(
+        child: SelectableText(
           msg.content,
           selectionControls: materialTextSelectionControls,
           style: TextStyle(color: msg.owned ? Global.cbOnMyBubble : Global.cbOnOthersBubble),

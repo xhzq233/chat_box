@@ -3,7 +3,6 @@
 import 'package:chat_box/global.dart';
 import 'package:chat_box/simple_text_field.dart';
 import 'package:chat_box/utils/auto_request_node.dart';
-import 'package:chat_box/utils/select_all_text.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:chat_box/utils/loading.dart';
@@ -42,17 +41,13 @@ class WelcomePage extends StatelessWidget {
                         final bytes = utf8.encode(sender);
                         final encrypted = md5.convert(bytes).toString();
                         try {
-                          final socket = await WebSocket.connect(
-                              'wss://${Global.host}',
-                              headers: {'Auth': encrypted});
+                          final socket =
+                              await WebSocket.connect(Global.wss + Global.wsHost, headers: {'Auth': encrypted});
                           Global.sender = sender; //登陆成功
                           Global.token = encrypted;
                           Loading.hide();
                           await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChatBox(socket: socket)));
+                              context, MaterialPageRoute(builder: (context) => ChatBox(socket: socket)));
                         } catch (e) {
                           Loading.hide();
                           toast('Error');

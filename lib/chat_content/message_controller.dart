@@ -1,12 +1,10 @@
 /// xhzq_test - wss_controller
 /// Created by xhz on 26/04/2022
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/scheduler.dart';
 import '../global.dart';
 import '../model/message.dart';
 import 'package:http/http.dart' as http;
@@ -40,6 +38,9 @@ class ChatMessagesController extends WidgetsBindingObserver {
   }
 
   void _receive(dynamic data) {
+    final schedulerPhase = SchedulerBinding.instance!.schedulerPhase;
+    log('$schedulerPhase');
+
     if (data is String) {
       if (data.startsWith('{')) {
         final msg = ChatMessage.fromJson(jsonDecode(data));
@@ -69,7 +70,7 @@ class ChatMessagesController extends WidgetsBindingObserver {
   void connect() async {
     Loading.show();
     try {
-      socket = await WebSocket.connect('wss://${Global.host}', headers: {'Auth': token});
+      socket = await WebSocket.connect(Global.wss + Global.wsHost, headers: {'Auth': token});
       startListen();
       Loading.hide();
     } catch (e) {
@@ -80,13 +81,19 @@ class ChatMessagesController extends WidgetsBindingObserver {
   }
 
   void send(String str) {
-    socket.add(str);
+    if (str.isEmpty) return;
+    socket.add(jsonEncode({
+      //只需要接受这三个，sender服务器那边有，time和id在存数据库时提供
+      'Content': str,
+      'RepTo': 0,
+      'IsImage': false,
+    }));
   }
 
   void request() async {
     if (_getting) return;
     _getting = true;
-    final res = await http.get(Uri.parse('https://${Global.host}'),
+    final res = await http.get(Uri.parse(Global.https + Global.wsHost),
         headers: {'hist': _messages.first.time.toIso8601String(), 'Auth': token});
     final list = (jsonDecode(res.body) as List).map((e) => ChatMessage.fromJson(e)).toList();
     if (list.isEmpty) {
@@ -112,8 +119,10 @@ class ChatMessagesController extends WidgetsBindingObserver {
     _getting = false;
   }
 
+  //only called by dispose method
   void close() {
     socket.close(1001, 'client closed socket');
+    log('close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()');
   }
 
   bool _isOnBackground = false;
@@ -123,18 +132,14 @@ class ChatMessagesController extends WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        print("应用进入前台======");
-        _isOnBackground = false;
+        _isOnBackground = false; //前台
         break;
       case AppLifecycleState.paused:
-        print("应用处于不可见状态 后台======");
-        _isOnBackground = true;
+        _isOnBackground = true; //后台
         break;
       case AppLifecycleState.inactive:
-        print("应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
         break;
       case AppLifecycleState.detached:
-        print("当前页面即将退出======");
         break;
     }
   }

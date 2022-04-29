@@ -1,24 +1,25 @@
-package xyz.xhzq.chat_box.chat_box
+package xyz.xhzq.chat_box
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
+import android.os.Bundle
 import android.os.Environment
+import android.os.PersistableBundle
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
-import com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -28,6 +29,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener
 import java.io.File
 import java.net.URI
+
 
 class DownloadManagerUtil(private val context: Context) {
 
@@ -109,7 +111,6 @@ class DownloadManagerUtil(private val context: Context) {
         Log.i("Download", destFile.absolutePath)
     }
 
-
     fun cleanup() {
         try {
             downloadManager.remove(downloadId)
@@ -123,7 +124,7 @@ class DownloadManagerUtil(private val context: Context) {
         val downloadFileUri = downloadManager.getUriForDownloadedFile(id)
 
         startInstall(
-            if (VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (VERSION.SDK_INT >= VERSION_CODES.N) {
                 FileProvider.getUriForFile(
                     context.applicationContext,
                     context.packageName.toString() + ".FileProvider",
@@ -138,7 +139,7 @@ class DownloadManagerUtil(private val context: Context) {
 
     private fun install(file: File) {
         startInstall(
-            if (VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (VERSION.SDK_INT >= VERSION_CODES.N) {
                 FileProvider.getUriForFile(
                     context.applicationContext,
                     context.packageName.toString() + ".FileProvider",
@@ -151,13 +152,14 @@ class DownloadManagerUtil(private val context: Context) {
         )
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun startInstall(uri: Uri) {
         Intent(Intent.ACTION_VIEW).apply {
 
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             // 7.0 以上
-            if (VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (VERSION.SDK_INT >= VERSION_CODES.N) {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             setDataAndType(
@@ -318,23 +320,60 @@ class PlatformApiPlugin(private val context: Context) : FlutterPlugin, NewIntent
         }
     }
 
+    private fun openNotificationSettingsForApp(context: Context) {
+        // Links to this app's notification settings.
+        val intent = Intent()
+        intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+        intent.putExtra("app_package", context.packageName)
+        intent.putExtra("app_uid", context.applicationInfo.uid)
+        // for Android 8 and above
+        intent.putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
+        context.startActivity(intent)
+    }
+
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
+
+    private fun isNotificationChannelEnabled(context: Context): Boolean {
+        return if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            if (!TextUtils.isEmpty(CHANNEL_ID)) {
+                val manager = NotificationManagerCompat.from(context)
+                val channel = manager.getNotificationChannel(CHANNEL_ID)
+                return if (channel != null) {
+                    channel.importance != NotificationManager.IMPORTANCE_NONE
+                } else {
+                    false
+                }
+            }
+            false
+        } else {
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
+        }
+    }
 
     private fun createNotificationChannel() {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             val name = "xhzq_cb"
             val descriptionText = "CB Message Channel"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
                 setShowBadge(true)
+                if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+                    setAllowBubbles(true)
+                }
+                setImportance(NotificationManager.IMPORTANCE_HIGH)
             }
             NotificationManagerCompat.from(context).createNotificationChannel(channel)
+        }
+
+        if (!isNotificationChannelEnabled(context)) {
+            api.toast("Notification not Enabled", true)
+            openNotificationSettingsForApp(context)
         }
     }
 
     override fun onNewIntent(intent: Intent?): Boolean {
-        NotificationManagerCompat.from(context).cancelAll()
+        msgNumber = 0 //清零
         val res = sendNotificationPayloadMessage(intent!!)
         if (res && mainActivity != null) {
             mainActivity!!.intent = intent
@@ -380,7 +419,9 @@ class PlatformApiPlugin(private val context: Context) : FlutterPlugin, NewIntent
         return false
     }
 
+
     private fun handleNotification(id: Int, title: String, body: String, payload: String): Boolean {
+        val manager = NotificationManagerCompat.from(context)
         //intent
         val intent = getLaunchIntent(context)
         intent.action = SELECT_NOTIFICATION
@@ -391,46 +432,54 @@ class PlatformApiPlugin(private val context: Context) : FlutterPlugin, NewIntent
         }
         val pendingIntent = PendingIntent.getActivity(context, id, intent, flags)
 
+        manager.cancelAll()
+
         // Create an explicit intent for an Activity in your app
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
+            .setContentTitle("CB (${++msgNumber} messages new)")
             .setFullScreenIntent(pendingIntent, true)
             .setContentIntent(pendingIntent)
-            .setNumber(1)
-//            .setAutoCancel(true)
-//            .setContentText(body)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText(body)
-            )
+            .setNumber(msgNumber)
+            .setAutoCancel(true)
+            .setContentText("$title: $body")
             .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         val notification = builder.build()
-        NotificationManagerCompat.from(context).notify(id, notification)
+        manager.notify(id, notification)
         return true
     }
 }
 
+private var msgNumber: Int = 0
 
 class MainActivity : FlutterActivity() {
 
-//    private val receiver = DownloadReceiver()
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        val intentFilter = IntentFilter()
-//        intentFilter.addAction("android.intent.action.DOWNLOAD_COMPLETE")
-//        intentFilter.addAction("android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED")
-//        registerReceiver(receiver, intentFilter)
-//        super.onCreate(savedInstanceState)
-//    }
-//
-//    override fun onDestroy() {
-//        unregisterReceiver(receiver)
-//        super.onDestroy()
-//    }
+    override fun onResume() {
+        msgNumber = 0 // 切回主activity, 消息清零
+        println("onResume()onResume()onResume()onResume()onResume()onResume()onResume()onResume()onResume()")
+        super.onResume()
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         flutterEngine.plugins.add(PlatformApiPlugin(context))
         super.configureFlutterEngine(flutterEngine)
     }
+
+    override fun onDestroy() {
+        println("onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()onDestroy()")
+        super.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        println("onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()onSaveInstanceState()")
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        println("onRestoreInstanceState()onRestoreInstanceState()onRestoreInstanceState()onRestoreInstanceState()\nonRestoreInstanceState()onRestoreInstanceState()")
+        super.onRestoreInstanceState(savedInstanceState)
+    }
+
 }
