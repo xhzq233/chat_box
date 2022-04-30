@@ -1,5 +1,6 @@
 /// xhzq_test - global
 /// Created by xhz on 25/04/2022
+import 'package:chat_box/chat_content/message_controller.dart';
 import 'package:flutter/material.dart';
 
 class Global {
@@ -7,11 +8,12 @@ class Global {
   static String token = '';
   static const https = 'https://';
   static const wss = 'wss://';
+  static const imageHost = "images.xhzq.xyz/";
   static const wsHost = 'xhzq.xyz:23333';
   static const releasesUrl = 'xhzq.xyz/files/'; // + version tag
   static const arm64 = 'app-arm64-v8a-release.apk';
   static const arm32 = 'app-armeabi-v7a-release.apk';
-
+  static final chatMessagesController = ChatMessagesController();
   static const cbBackground = Color.fromARGB(255, 23, 23, 23);
   static const cbSendButtonBackground = Color.fromARGB(255, 44, 44, 44);
   static const cbHintMessageBackground = cbSendButtonBackground;

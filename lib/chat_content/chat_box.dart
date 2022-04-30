@@ -12,6 +12,8 @@ import 'package:chat_box/chat_content/chat_row.dart';
 import 'package:chat_box/utils/auto_request_node.dart';
 import 'package:chat_box/utils/toast.dart';
 
+import 'image_row.dart';
+
 class ChatBox extends StatefulWidget {
   const ChatBox({Key? key, required this.socket}) : super(key: key);
   final WebSocket socket;
@@ -21,11 +23,7 @@ class ChatBox extends StatefulWidget {
 }
 
 class _ChatBoxState extends State<ChatBox> {
-  late final ChatMessagesController chatMessagesController = ChatMessagesController()
-    ..socket = widget.socket
-    ..context = context
-    ..startListen()
-    ..bindObserver();
+  ChatMessagesController get chatMessagesController => Global.chatMessagesController;
 
   final TextEditingController _textEditingController = TextEditingController();
   final _node = FocusNode();
@@ -33,6 +31,16 @@ class _ChatBoxState extends State<ChatBox> {
   bool get _end => chatMessagesController.end;
 
   int get len => chatMessagesController.len;
+
+  @override
+  void initState() {
+    super.initState();
+    chatMessagesController
+      ..socket = widget.socket
+      ..context = context
+      ..startListen()
+      ..bindObserver();
+  }
 
   @override
   void dispose() {
@@ -94,7 +102,7 @@ class _ChatBoxState extends State<ChatBox> {
       if (msg.isHint) {
         return HintRow(content: msg.content);
       } else if (msg.isImage) {
-        return Container();
+        return ImageRow(msg: msg);
       } else {
         return ChatRow(
           msg: msg,

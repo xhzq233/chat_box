@@ -18,9 +18,7 @@ class ChatMessagesController extends WidgetsBindingObserver {
 
   String get token => Global.token;
 
-  late final List<ChatMessage> _messages = [
-    ChatMessage(sender: '', id: 0, time: DateTime.now(), content: '${Global.sender} joined the chat')
-  ];
+  final List<ChatMessage> _messages = [];
 
   ChatMessage messageOf(int index) => _messages[index];
 
@@ -52,6 +50,7 @@ class ChatMessagesController extends WidgetsBindingObserver {
         //hint
         _messages.add(ChatMessage(sender: '', id: 0, time: DateTime.now(), content: data));
       }
+
       (context as Element).markNeedsBuild();
     } else {
       log('unknown data: $data');
@@ -59,6 +58,8 @@ class ChatMessagesController extends WidgetsBindingObserver {
   }
 
   void startListen() {
+    _messages.clear();
+    _messages.add(ChatMessage(sender: '', id: 0, time: DateTime.now(), content: '${Global.sender} joined the chat'));
     socket.listen(_receive, onError: (e) {
       toast('error while listening: $e');
       Navigator.pop(context);
@@ -75,18 +76,17 @@ class ChatMessagesController extends WidgetsBindingObserver {
       Loading.hide();
     } catch (e) {
       Loading.hide();
-      toast('connection err with $e');
-      Navigator.pop(context);
+      toast('Error: $e');
     }
   }
 
-  void send(String str) {
+  void send(String str, [bool isImage = false, int repTo = 0]) {
     if (str.isEmpty) return;
     socket.add(jsonEncode({
       //只需要接受这三个，sender服务器那边有，time和id在存数据库时提供
       'Content': str,
-      'RepTo': 0,
-      'IsImage': false,
+      'RepTo': repTo,
+      'IsImage': isImage,
     }));
   }
 
@@ -122,6 +122,7 @@ class ChatMessagesController extends WidgetsBindingObserver {
   //only called by dispose method
   void close() {
     socket.close(1001, 'client closed socket');
+    _messages.clear();
     log('close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()');
   }
 
