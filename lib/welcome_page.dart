@@ -39,26 +39,20 @@ class WelcomePage extends StatelessWidget {
                   child: ElevatedButton(
                       onPressed: () async {
                         // debugDumpApp();
+                        Loading.show();
                         final v = await PlatformApi.appVersion;
                         final res = await http.get(Uri.parse('https://images.xhzq.xyz/version'));
                         if (v != res.body) {
+                          Loading.hide();
                           toast('Plz update');
+                          Navigator.of(context).pushNamed('/update');
                         } else {
-                          Loading.show();
-                          final sender = _controller.text.trim();
-                          final bytes = utf8.encode(sender);
-                          final encrypted = md5.convert(bytes).toString();
-                          try {
-                            final socket =
-                                await WebSocket.connect(Global.wss + Global.wsHost, headers: {'Auth': encrypted});
-                            Global.sender = sender; //登陆成功
-                            Global.token = encrypted;
-                            Loading.hide();
-                            await Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => ChatBox(socket: socket)));
-                          } catch (e) {
-                            Loading.hide();
-                            toast('Error');
+                          Global.sender = _controller.text.trim();
+                          Global.token = md5.convert(utf8.encode(Global.sender)).toString(); //转换
+                          final res = await Global.chatMessagesController.connect();
+                          Loading.hide();
+                          if (res) {
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatBox()));
                           }
                         }
                       },

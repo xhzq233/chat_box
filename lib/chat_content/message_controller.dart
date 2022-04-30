@@ -68,15 +68,13 @@ class ChatMessagesController extends WidgetsBindingObserver {
     }, cancelOnError: true);
   }
 
-  void connect() async {
-    Loading.show();
+  Future<bool> connect() async {
     try {
       socket = await WebSocket.connect(Global.wss + Global.wsHost, headers: {'Auth': token});
-      startListen();
-      Loading.hide();
+      return true;
     } catch (e) {
-      Loading.hide();
-      toast('Error: $e');
+      toast('Error: ${e.toString().trim()}');
+      return false;
     }
   }
 

@@ -15,9 +15,7 @@ import 'package:chat_box/utils/toast.dart';
 import 'image_row.dart';
 
 class ChatBox extends StatefulWidget {
-  const ChatBox({Key? key, required this.socket}) : super(key: key);
-  final WebSocket socket;
-
+  const ChatBox({Key? key}) : super(key: key);
   @override
   _ChatBoxState createState() => _ChatBoxState();
 }
@@ -36,7 +34,6 @@ class _ChatBoxState extends State<ChatBox> {
   void initState() {
     super.initState();
     chatMessagesController
-      ..socket = widget.socket
       ..context = context
       ..startListen()
       ..bindObserver();
