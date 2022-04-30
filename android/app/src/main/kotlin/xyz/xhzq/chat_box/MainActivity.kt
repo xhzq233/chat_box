@@ -422,6 +422,7 @@ class PlatformApiPlugin(private val context: Context) : FlutterPlugin, NewIntent
 
     private fun handleNotification(id: Int, title: String, body: String, payload: String): Boolean {
         val manager = NotificationManagerCompat.from(context)
+
         //intent
         val intent = getLaunchIntent(context)
         intent.action = SELECT_NOTIFICATION
@@ -458,7 +459,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onResume() {
         msgNumber = 0 // 切回主activity, 消息清零
-        println("onResume()onResume()onResume()onResume()onResume()onResume()onResume()onResume()onResume()")
+        NotificationManagerCompat.from(context).cancelAll()
         super.onResume()
     }
 
