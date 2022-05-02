@@ -1,13 +1,10 @@
 /// chat_box - welcome_page
 /// Created by xhz on 22/04/2022
-import 'dart:developer';
-import 'package:http/http.dart' as http;
 import 'package:chat_box/global.dart';
 import 'package:chat_box/simple_text_field.dart';
 import 'package:chat_box/utils/auto_request_node.dart';
 import 'package:chat_box/utils/platform_api/platform_api.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:chat_box/utils/loading.dart';
 import 'package:chat_box/utils/toast.dart';
 import 'chat_content/chat_box.dart';
@@ -41,8 +38,7 @@ class WelcomePage extends StatelessWidget {
                         // debugDumpApp();
                         Loading.show();
                         final v = await PlatformApi.appVersion;
-                        final res = await http.get(Uri.parse('https://images.xhzq.xyz/version'));
-                        if (v != res.body) {
+                        if (v != await Global.latestTag) {
                           Loading.hide();
                           toast('Plz update');
                           Navigator.of(context).pushNamed('/update');

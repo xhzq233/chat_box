@@ -73,7 +73,7 @@ class ChatMessagesController extends WidgetsBindingObserver {
       socket = await WebSocket.connect(Global.wss + Global.wsHost, headers: {'Auth': token});
       return true;
     } catch (e) {
-      toast('Error: ${e.toString().trim()}');
+      toast('Error');
       return false;
     }
   }

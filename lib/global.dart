@@ -2,6 +2,7 @@
 /// Created by xhz on 25/04/2022
 import 'package:chat_box/chat_content/message_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Global {
   static String sender = '';
@@ -13,6 +14,9 @@ class Global {
   static const releasesUrl = 'xhzq.xyz/files/'; // + version tag
   static const arm64 = 'app-arm64-v8a-release.apk';
   static const arm32 = 'app-armeabi-v7a-release.apk';
+
+  static Future<String> get latestTag async => (await http.get(Uri.parse(https + imageHost + 'version'))).body;
+
   static final chatMessagesController = ChatMessagesController();
   static const cbBackground = Color.fromARGB(255, 23, 23, 23);
   static const cbSendButtonBackground = Color.fromARGB(255, 44, 44, 44);

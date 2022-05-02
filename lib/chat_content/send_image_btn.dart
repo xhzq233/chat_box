@@ -1,42 +1,56 @@
 /// chat_box - send_image_btn
 /// Created by xhz on 29/04/2022
 import 'dart:developer';
+import 'package:chat_box/utils/loading.dart';
 import 'package:chat_box/utils/toast.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import '../global.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class SendImageButton extends StatelessWidget {
   const SendImageButton({Key? key}) : super(key: key);
 
+  Future<bool> _checkServerImageExist(String name) async {
+    final res = await http.post(Uri.parse(Global.https + Global.imageHost + "check/" + name));
+    if (res.statusCode == 200 && res.body == "ok") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //return img url
   void _selectAndUploadImage() async {
-    final picker = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final picker = await ImagePicker().pickImage(maxWidth: 1920,maxHeight: 1080,source: ImageSource.gallery);
     if (null == picker) {
       toast("Something went wrong");
       return;
     }
-    toast(picker.path);
-    var result = await FlutterImageCompress.compressWithFile(
-      picker.path,
-      minWidth: 1200,
-      minHeight: 1200,
-      quality: 88,
-    );
-    if (null == result) {
-      toast("Compress Image went wrong");
-      return;
-    }
-    final res = await http.post(Uri.parse(Global.https + Global.imageHost),
-        headers: {'content-type': 'image/' + picker.name.split('.').last}, body: result);
-    if (res.statusCode == 200) {
-      //body 是储存file的名字
-      Global.chatMessagesController.send(res.body, true);
+    Loading.show();
+    final bytes = await picker.readAsBytes();
+    final featBuf = bytes.sublist(0, 1024);//取前1kb
+    final hash = sha1.convert(featBuf);
+    final ex = picker.name
+        .split('.')
+        .last;
+    final hashName = '$hash.$ex';
+    final exist = await _checkServerImageExist(hashName);
+    if (exist) {
+      toast('Server already holds this image');
+      Global.chatMessagesController.send(hashName, true);
     } else {
-      toast('Error code: ${res.statusCode}');
+      final res = await http.post(Uri.parse(Global.https + Global.imageHost),
+          headers: {'content-type': 'image/' + ex}, body: bytes);//upload
+      if (res.statusCode == 200) {
+        //body 是储存file的名字
+        Global.chatMessagesController.send(res.body, true);
+      } else {
+        toast('Error code: ${res.statusCode}');
+      }
     }
+    Loading.hide();
   }
 
   @override
