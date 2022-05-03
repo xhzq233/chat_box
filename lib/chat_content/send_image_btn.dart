@@ -23,18 +23,16 @@ class SendImageButton extends StatelessWidget {
 
   //return img url
   void _selectAndUploadImage() async {
-    final picker = await ImagePicker().pickImage(maxWidth: 1920,maxHeight: 1080,source: ImageSource.gallery);
+    final picker = await ImagePicker().pickImage(maxWidth: 1200, source: ImageSource.gallery);
     if (null == picker) {
       toast("Something went wrong");
       return;
     }
     Loading.show();
     final bytes = await picker.readAsBytes();
-    final featBuf = bytes.sublist(0, 1024);//取前1kb
+    final featBuf = bytes.sublist(0, 1024); //取前1kb
     final hash = sha1.convert(featBuf);
-    final ex = picker.name
-        .split('.')
-        .last;
+    final ex = picker.name.split('.').last;
     final hashName = '$hash.$ex';
     final exist = await _checkServerImageExist(hashName);
     if (exist) {
@@ -42,7 +40,7 @@ class SendImageButton extends StatelessWidget {
       Global.chatMessagesController.send(hashName, true);
     } else {
       final res = await http.post(Uri.parse(Global.https + Global.imageHost),
-          headers: {'content-type': 'image/' + ex}, body: bytes);//upload
+          headers: {'content-type': 'image/' + ex}, body: bytes); //upload
       if (res.statusCode == 200) {
         //body 是储存file的名字
         Global.chatMessagesController.send(res.body, true);
