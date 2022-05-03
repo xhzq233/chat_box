@@ -61,12 +61,16 @@ class ImageFromUrl extends StatelessWidget {
       height: height,
       fit: BoxFit.scaleDown, //尽量保持原有分辨率
     );
+    final tag = img.hashCode.toString();
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-        return ImageDetailPage(url: url);
+        return ImageDetailPage(
+          url: url,
+          heroTag: tag,
+        );
       })),
       child: Hero(
-        tag: url,
+        tag: tag,
         child: img,
       ),
     );

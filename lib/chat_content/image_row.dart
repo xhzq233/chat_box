@@ -10,14 +10,6 @@ class ImageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //
-    // final img = ConstrainedBox(
-    //   constraints: BoxConstraints.loose(Size(, double.infinity)),
-    //   child: Image.network(
-    //     Global.https + Global.imageHost + msg.content,
-    //     fit: BoxFit.fitWidth,
-    //   ),
-    // );
     final img = ImageFromUrl(
       Global.https + Global.imageHost + msg.content,
       width: MediaQuery.of(context).size.width * 0.7,

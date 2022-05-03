@@ -4,8 +4,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageDetailPage extends StatelessWidget {
-  const ImageDetailPage({Key? key, required this.url}) : super(key: key);
+  const ImageDetailPage({Key? key, required this.url, required this.heroTag}) : super(key: key);
   final String url;
+  final String heroTag;
 
   @override
   Widget build(BuildContext context) {
