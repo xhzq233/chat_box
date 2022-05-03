@@ -22,8 +22,9 @@ class SendImageButton extends StatelessWidget {
   }
 
   //return img url
-  void _selectAndUploadImage() async {
-    final picker = await ImagePicker().pickImage(maxWidth: 1200, source: ImageSource.gallery);
+  void _selectAndUploadImage(bool gif) async {
+    final picker = await ImagePicker().pickImage(maxWidth: gif ? null : 1200, source: ImageSource.gallery);
+
     if (null == picker) {
       toast("Something went wrong");
       return;
@@ -51,13 +52,27 @@ class SendImageButton extends StatelessWidget {
     Loading.hide();
   }
 
+  void _chooseType(BuildContext context) async {
+    final res = await showDialog<bool>(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(content: const Text('Please choose the type of image'), actions: [
+            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('GIF')),
+            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Other'))
+          ]);
+        });
+    if (res != null) {
+      _selectAndUploadImage(res);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return ClipOval(
           child: GestureDetector(
-            onTap: _selectAndUploadImage,
+            onTap: () => _chooseType(context),
             child: Container(
               color: Global.cbPrimaryColor,
               width: constraints.maxWidth,
