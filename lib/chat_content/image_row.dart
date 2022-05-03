@@ -1,3 +1,4 @@
+import 'package:chat_box/chat_content/url_image.dart';
 import 'package:chat_box/model/message.dart';
 import 'package:flutter/material.dart';
 import '../global.dart';
@@ -9,9 +10,18 @@ class ImageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final img = Image.network(
+    //
+    // final img = ConstrainedBox(
+    //   constraints: BoxConstraints.loose(Size(, double.infinity)),
+    //   child: Image.network(
+    //     Global.https + Global.imageHost + msg.content,
+    //     fit: BoxFit.fitWidth,
+    //   ),
+    // );
+    final img = ImageFromUrl(
       Global.https + Global.imageHost + msg.content,
       width: MediaQuery.of(context).size.width * 0.7,
+      alignment: msg.owned ? Alignment.centerRight : Alignment.centerLeft,
     );
     if (msg.owned) {
       return Align(
@@ -26,7 +36,9 @@ class ImageRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             UserAvatar(name: msg.sender),
-            const SizedBox(width: 6,),
+            const SizedBox(
+              width: 6,
+            ),
             img
           ],
         ),
