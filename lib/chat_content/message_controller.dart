@@ -121,7 +121,6 @@ class ChatMessagesController extends WidgetsBindingObserver {
   void close() {
     socket.close(1001, 'client closed socket');
     _messages.clear();
-    log('close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()close()');
   }
 
   bool _isOnBackground = false;
