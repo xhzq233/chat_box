@@ -1,5 +1,7 @@
 /// chat_box - platform_api
 /// Created by xhz on 27/04/2022.
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 typedef SelectNotificationCallback = void Function(String? payload);
@@ -53,6 +55,7 @@ class PlatformApi {
   }
 
   static Future<String> get appVersion async {
+    if (Platform.isIOS) return '2.3.2';
     final result = await _channel.invokeMethod(_Method.getAppVersion);
     return result as String;
   }

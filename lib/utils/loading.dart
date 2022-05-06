@@ -1,7 +1,12 @@
 /// chat_box - loading
 /// Created by xhz on 22/04/2022
-import 'package:chat_box/utils/global_loading.dart';
 import 'package:flutter/material.dart';
+
+class GlobalOverlayContext {
+  // static late BuildContext overlayContext;
+  static OverlayState? overlayState;
+//app -> MediaQuery -> Directionality -> ScaffoldMessenger -> navigator -> overlay -> home
+}
 
 class Loading {
   static final _entry = OverlayEntry(
