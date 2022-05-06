@@ -14,13 +14,14 @@ class ImageDetailPage extends StatefulWidget {
 }
 
 class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProviderStateMixin {
-  late final _animationController = AnimationController(duration: const Duration(milliseconds: 100), vsync: this);
+  late final AnimationController _animationController;
   late void Function() _animationListener;
   Animation<double>? _animation;
   static const Pair _tween = Pair(1.0, 1.5);
 
   @override
   void initState() {
+    _animationController = AnimationController(duration: const Duration(milliseconds: 100), vsync: this);
     _animationListener = () {};
     super.initState();
   }
