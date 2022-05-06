@@ -14,7 +14,7 @@ class HintRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Text(
           content,
-          style: const TextStyle(color: Global.cbOnBackground, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),//color: Global.cbOnBackground,
         ),
       ),
     );

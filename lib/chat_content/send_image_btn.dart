@@ -78,10 +78,7 @@ class SendImageButton extends StatelessWidget {
               width: constraints.maxWidth,
               height: constraints.maxWidth,
               child: const Center(
-                child: Text(
-                  "+",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, decoration: TextDecoration.none),
-                ),
+                child: Icon(Icons.add,color: Colors.black,),
               ),
             ),
           ),

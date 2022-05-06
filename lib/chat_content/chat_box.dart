@@ -113,6 +113,13 @@ class _ChatBoxState extends State<ChatBox> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat Group'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.pushNamed(context, '/settings'),
+          ),
+        ],
       ),
       body: Column(
         children: [

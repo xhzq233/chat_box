@@ -45,6 +45,7 @@ class WelcomePageController {
 
   void _saveRecentlyUsed(String name) async {
     final list = await recentlyUsed;
+    if (list.contains(name)) return;
     list.add(name);
     final prefs = await SharedPreferences.getInstance();
     if (!await prefs.setStringList(spKey, list)) {
@@ -78,7 +79,7 @@ class WelcomePageController {
               left: globalOffset.dx,
               width: size.width,
               height: height,
-              child: Card(
+              child: Material(
                 child: RepaintBoundary(
                   child: Builder(
                       builder: (bCtx) => ListView.builder(

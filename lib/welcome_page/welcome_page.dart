@@ -33,8 +33,7 @@ class _WelcomePageState extends State<WelcomePage> {
           Container(
             key: _controller.textFieldKey,
             decoration: BoxDecoration(
-                border: Border.all(color: Global.cbSendButtonBackground, width: 3.0),
-                color: Global.cbPrimaryColor,
+                border: Border.all(color: Global.cbPrimaryColor, width: 3.0),
                 borderRadius: BorderRadius.circular(10)),
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.all(10),
@@ -42,7 +41,6 @@ class _WelcomePageState extends State<WelcomePage> {
               controller: _controller.controller,
               autocorrect: false,
               focusNode: _controller.focusNode,
-              cursorColor: Colors.black,
               decoration: const InputDecoration.collapsed(hintText: 'Input ur Name'),
             ),
           ),

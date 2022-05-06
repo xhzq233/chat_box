@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:chat_box/model/message.dart';
 
 import '../global.dart';
-import '../utils/select_all_text.dart';
 
 class ChatRow extends StatelessWidget {
   const ChatRow({Key? key, required this.msg}) : super(key: key);
