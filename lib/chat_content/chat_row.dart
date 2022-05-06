@@ -31,7 +31,7 @@ class ChatRow extends StatelessWidget {
         alignment: Alignment.centerRight,
         child: Padding(padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
             child: Theme(
-              child: bubble, data: ThemeData(colorScheme: Global.cbScheme.copyWith(primary: Global.cbOnBackground)),)),
+              child: bubble, data: ThemeData(colorScheme: Global.cbDarkScheme.copyWith(primary: Global.cbOnBackground)),)),
       );
     } else {
       return Padding(
