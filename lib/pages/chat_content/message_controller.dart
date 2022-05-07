@@ -5,12 +5,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import '../global.dart';
-import '../model/message.dart';
+import 'package:chat_box/global.dart';
+import '../../model/message.dart';
 import 'package:http/http.dart' as http;
-import 'package:chat_box/utils/loading.dart';
-import '../utils/platform_api/platform_api.dart';
-import '../utils/toast.dart';
+import '../../utils/utils.dart';
 
 class ChatMessagesController extends WidgetsBindingObserver {
   late WebSocket socket;

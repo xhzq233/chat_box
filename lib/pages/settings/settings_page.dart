@@ -11,7 +11,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool isDark = Global.notifier.value == ThemeMode.dark;
+  bool isDark = Global.themeModeNotifier.value == ThemeMode.dark;
 
   @override
   Widget build(BuildContext context) {

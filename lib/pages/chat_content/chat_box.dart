@@ -1,16 +1,12 @@
 /// chat_box - chat_box
 /// Created by xhz on 22/04/2022
-
-import 'dart:developer';
-import 'dart:io';
-import 'package:chat_box/chat_content/hint_row.dart';
-import 'package:chat_box/chat_content/message_controller.dart';
-import 'package:chat_box/chat_content/send_image_btn.dart';
+import 'package:chat_box/pages/chat_content/hint_row.dart';
+import 'package:chat_box/pages/chat_content/message_controller.dart';
+import 'package:chat_box/pages/chat_content/send_image_btn.dart';
 import 'package:chat_box/global.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_box/chat_content/chat_row.dart';
+import 'package:chat_box/pages/chat_content/chat_row.dart';
 import 'package:chat_box/utils/auto_request_node.dart';
-import 'package:chat_box/utils/toast.dart';
 
 import 'image_row.dart';
 
@@ -41,7 +37,6 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   void dispose() {
-    log('call dispose');
     chatMessagesController.close();
     chatMessagesController.removeObserver();
     super.dispose();

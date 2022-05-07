@@ -1,6 +1,5 @@
 /// xhzq_test - hint_row
 /// Created by xhz on 26/04/2022
-import 'package:chat_box/global.dart';
 import 'package:flutter/material.dart';
 
 class HintRow extends StatelessWidget {

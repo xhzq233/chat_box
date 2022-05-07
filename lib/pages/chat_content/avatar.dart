@@ -1,7 +1,7 @@
 /// xhzq_test - avatar
 /// Created by xhz on 26/04/2022
 import 'package:chat_box/global.dart';
-import 'package:chat_box/user/user_page.dart';
+import 'package:chat_box/pages/user/user_page.dart';
 import 'package:flutter/material.dart';
 
 class UserAvatar extends StatelessWidget {

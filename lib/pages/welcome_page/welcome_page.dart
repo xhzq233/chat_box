@@ -1,9 +1,9 @@
 /// chat_box - welcome_page
 /// Created by xhz on 22/04/2022
 import 'package:chat_box/utils/auto_request_node.dart';
-import 'package:chat_box/welcome_page/controller.dart';
+import 'package:chat_box/pages/welcome_page/controller.dart';
 import 'package:flutter/material.dart';
-import '../global.dart';
+import 'package:chat_box/global.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);

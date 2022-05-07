@@ -1,10 +1,10 @@
 /// chat_box - chat_row
 /// Created by xhz on 22/04/2022
-import 'package:chat_box/chat_content/avatar.dart';
+import 'package:chat_box/pages/chat_content/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_box/model/message.dart';
 
-import '../global.dart';
+import 'package:chat_box/global.dart';
 
 class ChatRow extends StatelessWidget {
   const ChatRow({Key? key, required this.msg}) : super(key: key);

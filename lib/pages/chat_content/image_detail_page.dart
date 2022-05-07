@@ -4,11 +4,12 @@ import 'package:chat_box/utils/toast.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
-class ImageDetailPage extends StatefulWidget {
-  const ImageDetailPage({Key? key, required this.url, required this.heroTag}) : super(key: key);
-  final String url;
-  final String heroTag;
+import 'package:chat_box/global.dart';
 
+class ImageDetailPage extends StatefulWidget {
+  const ImageDetailPage({Key? key, required this.name,required this.heroTag}) : super(key: key);
+  final String name;
+  final String heroTag;
   @override
   State<ImageDetailPage> createState() => _ImageDetailPageState();
 }
@@ -36,13 +37,12 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final cacheUrlPath = Uri.parse(widget.url).path.replaceAll('/', '%2F');
     final size = MediaQuery.of(context).size;
     final img = ExtendedImage.network(
-      widget.url,
-      cacheKey: cacheUrlPath,
+      Global.https + Global.imageHost + widget.name,
+      cacheKey: widget.name,
       printError: false,
-      mode: ExtendedImageMode.gesture,
+      mode: ExtendedImageMode.none,
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
@@ -110,14 +110,9 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
       height: size.height,
       fit: BoxFit.scaleDown, //尽量保持原有分辨率
     );
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Image Detail'),
-      ),
-      body: Hero(
-        tag: widget.heroTag,
-        child: img,
-      ),
+    return GestureDetector(
+      onTap: () => Navigator.pop(context),
+      child: Hero(tag: widget.heroTag, child: img),
     );
   }
 }

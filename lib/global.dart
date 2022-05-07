@@ -1,6 +1,6 @@
 /// xhzq_test - global
 /// Created by xhz on 25/04/2022
-import 'package:chat_box/chat_content/message_controller.dart';
+import 'package:chat_box/pages/chat_content/message_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -106,7 +106,8 @@ class Global {
         color: Colors.white70,
         fontSize: 15,
         decoration: TextDecoration.none),
-    bodyMedium: TextStyle(//body
+    bodyMedium: TextStyle(
+        //body
         debugLabel: 'blackCupertino bodyMedium',
         fontFamily: '.SF UI Text',
         color: Colors.white,
@@ -254,10 +255,14 @@ class Global {
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 
-  static final ValueNotifier<ThemeMode> notifier = ValueNotifier(ThemeMode.dark);
+  static final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.dark);
+  static Size screenSize = Size.zero;
+
+  static double get screenWidth => screenSize.width;
+
+  static double get screenHeight => screenSize.height;
 
   static void changeTheme(bool isDark) {
-    notifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
+    themeModeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
   }
-
 }

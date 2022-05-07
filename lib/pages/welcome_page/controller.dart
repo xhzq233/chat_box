@@ -7,8 +7,8 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../global.dart';
-import '../utils/utils.dart';
+import 'package:chat_box/global.dart';
+import '../../utils/utils.dart';
 
 class WelcomePageController {
   WelcomePageController(this.context) {

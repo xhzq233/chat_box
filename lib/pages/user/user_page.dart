@@ -2,7 +2,7 @@
 /// Created by xhz on 26/04/2022
 import 'package:flutter/material.dart';
 
-import '../global.dart';
+import 'package:chat_box/global.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({Key? key, required this.name,required this.hero}) : super(key: key);
