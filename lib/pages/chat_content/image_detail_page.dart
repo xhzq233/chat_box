@@ -9,7 +9,7 @@ import 'package:chat_box/global.dart';
 class ImageDetailPage extends StatefulWidget {
   const ImageDetailPage({Key? key, required this.name,required this.heroTag}) : super(key: key);
   final String name;
-  final String heroTag;
+  final Object heroTag;
   @override
   State<ImageDetailPage> createState() => _ImageDetailPageState();
 }
@@ -42,7 +42,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
       Global.https + Global.imageHost + widget.name,
       cacheKey: widget.name,
       printError: false,
-      mode: ExtendedImageMode.none,
+      mode: ExtendedImageMode.gesture,
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
@@ -108,7 +108,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
       },
       width: size.width,
       height: size.height,
-      fit: BoxFit.scaleDown, //尽量保持原有分辨率
+      fit: BoxFit.fitWidth, //尽量保持原有分辨率
     );
     return GestureDetector(
       onTap: () => Navigator.pop(context),

@@ -17,8 +17,8 @@ class ChatRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 9),
         margin: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: msg.owned ? Global.cbMyBubbleBackground : Global.cbOthersBubbleBackground,
+          borderRadius: BorderRadius.circular(8),
+          color: msg.owned ? Global.cbMyBubbleBackground : Global.cbOthersBubbleBackground,
         ),
         child: SelectableText(
           msg.content,
@@ -28,9 +28,12 @@ class ChatRow extends StatelessWidget {
     if (msg.owned) {
       return Align(
         alignment: Alignment.centerRight,
-        child: Padding(padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
+        child: Padding(
+            padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
             child: Theme(
-              child: bubble, data: ThemeData(colorScheme: Global.cbDarkScheme.copyWith(primary: Global.cbOnBackground)),)),
+              child: bubble,
+              data: ThemeData(colorScheme: Global.cbDarkScheme.copyWith(primary: Global.cbOnBackground)),
+            )),
       );
     } else {
       return Padding(

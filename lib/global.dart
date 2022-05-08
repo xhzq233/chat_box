@@ -238,7 +238,7 @@ class Global {
 
   static final darkTheme = ThemeData.dark().copyWith(
     canvasColor: cbAppBar,
-    cardColor: Colors.black12,
+    cardColor: Colors.black45,
     scaffoldBackgroundColor: cbBackground,
     appBarTheme: const AppBarTheme(color: cbAppBar),
     indicatorColor: cbPrimaryColor,
