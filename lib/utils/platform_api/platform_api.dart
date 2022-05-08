@@ -1,9 +1,11 @@
 /// chat_box - platform_api
 /// Created by xhz on 27/04/2022.
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+
 typedef SelectNotificationCallback = void Function(String? payload);
 
 class PlatformApi {
@@ -13,7 +15,8 @@ class PlatformApi {
 
   static late final SelectNotificationCallback _onSelectNotification;
 
-  static Future<void> setSelectNotificationCallback(SelectNotificationCallback onSelectNotification) async {
+  static Future<void> setSelectNotificationCallback(
+      SelectNotificationCallback onSelectNotification) async {
     _onSelectNotification = onSelectNotification;
     WidgetsFlutterBinding.ensureInitialized();
     _channel.setMethodCallHandler(_handleMethod);
@@ -78,7 +81,8 @@ class PlatformApi {
     return result as bool;
   }
 
-  static Future<bool> notification(int id, String title, String body, String? payload) async {
+  static Future<bool> notification(
+      int id, String title, String body, String? payload) async {
     final result = await _channel.invokeMethod(
       _Method.notification,
       {
@@ -90,6 +94,23 @@ class PlatformApi {
     );
     return result as bool;
   }
+
+  static Future<bool?> saveImage(Uint8List imageBytes, String filename) async {
+    try {
+      final result = await _channel.invokeMethod(
+        _Method.saveImage,
+        {
+          'imageBytes': imageBytes,
+          'filename': filename,
+        },
+      );
+      if (result) toast('Save success');
+      return result;
+    } on PlatformException {
+      toast('Save failed');
+      return null;
+    }
+  }
 }
 
 class _Method {
@@ -100,4 +121,5 @@ class _Method {
   static const urlLaunch = 'urlLaunch';
   static const updateApp = 'updateApp';
   static const notification = 'notification';
+  static const saveImage = 'saveImage';
 }

@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -30,6 +28,123 @@ import io.flutter.plugin.common.PluginRegistry.NewIntentListener
 import java.io.File
 import java.net.URI
 
+
+import android.content.ContentValues
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.webkit.MimeTypeMap
+import android.os.Looper
+import android.os.Handler
+import android.content.Context
+import kotlin.concurrent.thread
+
+fun Context.saveImage(imageBytes: ByteArray, filename: String): Boolean? {
+
+    //图片已经存在
+    if (imageIsExist(filename)) {
+        return null
+    }
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+
+        val saveDirectory = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+            "ChatBox"
+        )
+
+        val imageFile = File("${saveDirectory.absolutePath}/$filename")
+
+        val parent = imageFile.parentFile ?: return false
+
+        //目录不存在就创建
+        if (!parent.exists() && !parent.mkdirs()) {
+            return false
+        }
+
+        imageFile.outputStream().use {
+            it.write(imageBytes)
+        }
+        MediaScannerConnection.scanFile(
+            this, arrayOf(imageFile.absolutePath), arrayOf(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    MimeTypeMap.getFileExtensionFromUrl(filename)
+                )
+            )
+        ) { _, _ ->
+
+        }
+        return true
+    }
+
+    val values = ContentValues()
+    //文件名
+    values.put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+
+
+
+    values.put(
+        MediaStore.MediaColumns.MIME_TYPE,
+        MimeTypeMap.getSingleton()
+            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(filename))
+    )
+
+    //相册目录
+    values.put(
+        MediaStore.MediaColumns.RELATIVE_PATH,
+        "${Environment.DIRECTORY_PICTURES}/PixivFunc"
+    )
+
+    var uri: Uri? = null
+    return try {
+        uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        contentResolver.openOutputStream(uri!!)?.use {
+            it.write(imageBytes)
+        }
+        true
+    } catch (e: Exception) {
+        uri?.let { contentResolver.delete(it, null, null) }
+        false
+    }
+
+}
+
+
+fun Context.imageIsExist(filename: String): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        val saveDirectory =
+            File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "PixivFunc"
+            )
+
+        return saveDirectory.exists() && File("${saveDirectory.absolutePath}/$filename").exists()
+    }
+
+    val where =
+        "${MediaStore.Images.Media.RELATIVE_PATH} LIKE ? AND ${MediaStore.Images.Media.DISPLAY_NAME} = ?"
+
+    val args = arrayOf(
+        "%${Environment.DIRECTORY_PICTURES}/${"PixivFunc"}%",
+        filename,
+    )
+
+    contentResolver.query(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        arrayOf(MediaStore.Images.Media._ID),
+        where,
+        args,
+        //不排序
+        null
+    )?.use { cursor ->
+        if (cursor.moveToNext()) {
+            return true
+        }
+    }
+
+    return false
+}
 
 class DownloadManagerUtil(private val context: Context) {
 
@@ -251,6 +366,10 @@ class PlatformApi(private val context: Context) {
         }
     }
 
+    fun saveImage(imageBytes: ByteArray, filename: String): Boolean? {
+        return context.saveImage(imageBytes, filename)
+    }
+
     enum class Method(val value: String) {
         TOAST("toast"),
         GET_BUILD_VERSION("getBuildVersion"),
@@ -258,6 +377,7 @@ class PlatformApi(private val context: Context) {
         URL_LAUNCH("urlLaunch"),
         UPDATE_APP("updateApp"),
         NOTIFICATION("notification"),
+        SAVE_IMAGE("saveImage"),
     }
 }
 
@@ -311,6 +431,17 @@ class PlatformApiPlugin(private val context: Context) : FlutterPlugin, NewIntent
                                 call.argument<String>("payload")!!
                             )
                         )
+                    }
+                    PlatformApi.Method.SAVE_IMAGE.value -> {
+                        thread {
+                            val rs = api.saveImage(
+                                call.argument<ByteArray>("imageBytes")!!,
+                                call.argument<String>("filename")!!
+                            )
+                            Handler(Looper.getMainLooper()).post {
+                                result.success(rs)
+                            }
+                        }
                     }
                     else -> {
                         result.notImplemented()
