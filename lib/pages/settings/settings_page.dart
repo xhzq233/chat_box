@@ -1,6 +1,6 @@
 /// chat_box - settings_page
 /// Created by xhz on 06/05/2022
-import 'package:chat_box/global.dart';
+import 'package:chat_box/utils/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -11,7 +11,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool isDark = Global.themeModeNotifier.value == ThemeMode.dark;
+  bool get isDark => ThemeNotifier.shared.value == ThemeMode.dark;
+
+  bool get isSys => ThemeNotifier.shared.value == ThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +23,28 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(isDark ? 'DarkMode' : 'LightMode'),
-              Switch.adaptive(
-                  value: isDark,
-                  onChanged: (to) {
-                    isDark = to;
-                    Global.changeTheme(isDark);
-                    (context as Element).markNeedsBuild();
-                  })
-            ],
-          )
+          ListTile(
+            title: const Text('Follow System Theme Mode'),
+            subtitle: Text('Current: ' + (isSys ? 'System' : 'Custom')),
+            trailing: Switch.adaptive(
+                value: isSys,
+                onChanged: (to) {
+                  ThemeNotifier.shared.value = to ? ThemeMode.system : ThemeMode.dark;
+                  (context as Element).markNeedsBuild();
+                }),
+          ),
+          ListTile(
+            title: const Text('Use Dark Appearance'),
+            subtitle: Text('Current: ' + ThemeNotifier.shared.toString()),
+            trailing: Switch.adaptive(
+                value: isDark,
+                onChanged: isSys
+                    ? null
+                    : (to) {
+                        ThemeNotifier.shared.value = to ? ThemeMode.dark : ThemeMode.light;
+                        (context as Element).markNeedsBuild();
+                      }),
+          ),
         ],
       ),
     );

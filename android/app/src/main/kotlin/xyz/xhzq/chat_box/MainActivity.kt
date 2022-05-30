@@ -574,7 +574,7 @@ class PlatformApiPlugin(private val context: Context) : FlutterPlugin, NewIntent
             .setContentIntent(pendingIntent)
             .setNumber(msgNumber)
             .setAutoCancel(true)
-            .setContentText("$title: $body")
+            .setContentText("$title $body")
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 

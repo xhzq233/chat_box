@@ -16,12 +16,16 @@ class Loading {
           child: CircularProgressIndicator(),
         )),
   );
-
+  static bool _showing = false;
   static void show() {
+    if (_showing) return;
     GlobalOverlayContext.overlayState!.insert(_entry);
+    _showing = true;
   }
 
   static void hide() {
+    if (!_showing) return;
     _entry.remove();
+    _showing = false;
   }
 }

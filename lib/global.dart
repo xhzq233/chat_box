@@ -1,33 +1,23 @@
 /// xhzq_test - global
 /// Created by xhz on 25/04/2022
-import 'package:chat_box/pages/chat_content/message_controller.dart';
+import 'package:chat_box/utils/loading.dart';
+import 'package:chat_box/utils/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Global {
-  static String sender = '';
-  static String token = '';
-  static const https = 'https://';
-  static const wss = 'wss://';
-  static const imageHost = "images.xhzq.xyz/";
-  static const wsHost = 'xhzq.xyz:23333';
-  static const releasesUrl = 'xhzq.xyz/files/'; // + version tag
-  static const arm64 = 'app-arm64-v8a-release.apk';
-  static const arm32 = 'app-armeabi-v7a-release.apk';
-
-  static Future<String> get latestTag async => (await http.get(Uri.parse(https + imageHost + 'version'))).body;
-
-  static final chatMessagesController = ChatMessagesController();
   static const cbBackground = Color.fromARGB(255, 23, 23, 23);
-  static const cbOthersBubbleBackground = Color.fromARGB(255, 45, 45, 45);
-  static const cbAppBar = cbOthersBubbleBackground;
+  static const cbOthersBubbleBackground = cbSecondaryBackground;
+  static const cbAppBar = cbSecondaryBackground;
+  static const cbSecondaryBackground = Color.fromARGB(255, 45, 45, 45);
   static const cbPrimaryColor = cbMyBubbleBackground;
   static const cbMyBubbleBackground = Color.fromARGB(255, 113, 243, 142);
-  static const cbOnOthersBubble = Colors.white;
+  static const cbOnOthersBubble = cbOnBackground;
   static const cbOnBackground = Colors.white;
 
   static const cbOnMyBubble = Colors.black;
   static const cbWarning = Colors.pink;
+  static const tsWarning = TextStyle(color: cbWarning);
   static const cbTextFieldBackground = Color.fromARGB(255, 27, 27, 27);
 
   static final cbDarkScheme = const ColorScheme.dark().copyWith(
@@ -42,7 +32,9 @@ class Global {
     onError: cbWarning,
   );
 
-  static final cbLightScheme = const ColorScheme.light().copyWith(primary: cbPrimaryColor);
+  static final cbLightScheme = const ColorScheme.light().copyWith(
+    primary: cbPrimaryColor,
+  );
   static const textTheme = TextTheme(
     displayLarge: TextStyle(
         debugLabel: 'blackCupertino displayLarge',
@@ -91,19 +83,20 @@ class Global {
         debugLabel: 'blackCupertino titleMedium',
         fontFamily: '.SF UI Text',
         color: Colors.white,
+        //list tile title
         fontSize: 16,
         //接近AppBar的文字大小
         decoration: TextDecoration.none),
     titleSmall: TextStyle(
         debugLabel: 'blackCupertino titleSmall',
         fontFamily: '.SF UI Text',
-        color: Colors.white70,
+        color: Colors.white,
         fontSize: 15,
         decoration: TextDecoration.none),
     bodyLarge: TextStyle(
         debugLabel: 'blackCupertino bodyLarge',
         fontFamily: '.SF UI Text',
-        color: Colors.white70,
+        color: Colors.white,
         fontSize: 15,
         decoration: TextDecoration.none),
     bodyMedium: TextStyle(
@@ -116,26 +109,27 @@ class Global {
     bodySmall: TextStyle(
         debugLabel: 'blackCupertino bodySmall',
         fontFamily: '.SF UI Text',
-        color: Colors.white,
+        color: Colors.white54,
+        //list tile subtitle
         fontSize: 12,
         decoration: TextDecoration.none),
     labelLarge: TextStyle(
         debugLabel: 'blackCupertino labelLarge',
         fontFamily: '.SF UI Text',
-        color: Colors.white,
+        color: Colors.white70,
         fontSize: 16,
         //按钮上文字大小
         decoration: TextDecoration.none),
     labelMedium: TextStyle(
         debugLabel: 'blackCupertino labelMedium',
         fontFamily: '.SF UI Text',
-        color: Colors.white,
+        color: Colors.white38,
         fontSize: 14,
         decoration: TextDecoration.none),
     labelSmall: TextStyle(
         debugLabel: 'blackCupertino labelSmall',
         fontFamily: '.SF UI Text',
-        color: Colors.white,
+        color: Colors.white38,
         fontSize: 12,
         decoration: TextDecoration.none),
   );
@@ -247,22 +241,28 @@ class Global {
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 
+  static const cbLightBackground = Colors.white;
+
   static final lightTheme = ThemeData.light().copyWith(
     cardColor: cbPrimaryColor,
     indicatorColor: cbPrimaryColor,
+    primaryColor: Colors.grey,
+    scaffoldBackgroundColor: cbLightBackground,
     textTheme: lightTextTheme,
     colorScheme: cbLightScheme,
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 
-  static final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.dark);
-  static Size screenSize = Size.zero;
+  static Size get screenSize => MediaQuery.of(GlobalOverlayContext.overlayState!.context).size;
 
   static double get screenWidth => screenSize.width;
 
   static double get screenHeight => screenSize.height;
 
-  static void changeTheme(bool isDark) {
-    themeModeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
-  }
+  static const defaultSpacing = SizedBox(
+    height: 10,
+    width: 5,
+  );
 }
+
+

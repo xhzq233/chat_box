@@ -58,7 +58,7 @@ class PlatformApi {
   }
 
   static Future<String> get appVersion async {
-    if (Platform.isIOS) return '2.3.2';
+    if (Platform.isIOS) return '2.3.3';
     final result = await _channel.invokeMethod(_Method.getAppVersion);
     return result as String;
   }

@@ -36,12 +36,12 @@ toast(String str, {int delay = 4}) {
               ),
             ),
           ));
-  ToastQueue.push(Pair(delay, _overlayEntry));
+  _ToastQueue.push(Pair(delay, _overlayEntry));
 }
 
 typedef ToastQueueValue = Pair<int, OverlayEntry>;
 
-class ToastQueue {
+class _ToastQueue {
   static final List<ToastQueueValue> _queue = [];
   static bool _isRunning = false;
 

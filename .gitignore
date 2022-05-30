@@ -28,3 +28,6 @@ doc/api/
 
 # idea
 .idea/
+ios/
+*.lock
+*.iml
