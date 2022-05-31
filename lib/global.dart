@@ -1,9 +1,7 @@
 /// xhzq_test - global
 /// Created by xhz on 25/04/2022
 import 'package:chat_box/utils/loading.dart';
-import 'package:chat_box/utils/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Global {
   static const cbBackground = Color.fromARGB(255, 23, 23, 23);

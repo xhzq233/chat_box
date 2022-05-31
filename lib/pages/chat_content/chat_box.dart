@@ -1,5 +1,6 @@
 /// chat_box - chat_box
 /// Created by xhz on 22/04/2022
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:chat_box/controller/message/message_controller.dart';
@@ -22,10 +23,13 @@ class _ChatBoxState extends State<ChatBox> {
   final _node = FocusNode();
   final _notifier = ValueNotifier(false);
 
+  late final _listView = ChatListView(data: source);
+
   final ChatListSource source = ChatMessagesController.shared.currentChatListSource ?? exit(0);
 
   @override
   Widget build(BuildContext context) {
+    log('current _ChatBoxState $hashCode');
     return Scaffold(
       appBar: AppBar(
         title: Text(source.group.name),
@@ -35,7 +39,7 @@ class _ChatBoxState extends State<ChatBox> {
         children: [
           Expanded(
             flex: 8,
-            child: AutoUnFocusWrap(focusNodes: [_node], child: ChatListView(data: source)),
+            child: AutoUnFocusWrap(focusNodes: [_node], child: _listView),
           ),
           TextInputField(controller: _textEditingController, node: _node, notifier: _notifier)
         ],

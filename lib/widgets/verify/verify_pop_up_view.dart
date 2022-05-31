@@ -4,7 +4,6 @@ import 'package:chat_box/global.dart';
 import 'package:chat_box/utils/utils.dart';
 import 'package:chat_box/widgets/text_field/custom_text_field.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 class VerifyView extends StatefulWidget {
   const VerifyView({Key? key, required this.onPressVerify, this.focusNode}) : super(key: key);

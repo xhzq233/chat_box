@@ -1,6 +1,5 @@
 /// chat_box - chat_row
 /// Created by xhz on 22/04/2022
-import 'package:chat_box/controller/message/message_controller.dart';
 import 'package:chat_box/widgets/user/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_box/model/message.dart';

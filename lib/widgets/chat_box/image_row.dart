@@ -8,7 +8,6 @@ import 'package:chat_box/widgets/image/url_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_box/global.dart';
-import '../../controller/message/message_controller.dart';
 import '../user/avatar.dart';
 import '../image/image_detail_page.dart';
 

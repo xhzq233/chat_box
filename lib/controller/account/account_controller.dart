@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:chat_box/main.dart';
 import 'package:chat_box/utils/loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -97,7 +96,8 @@ class AccountController {
     _updateAccountList();
   }
 
-  void _updateAccountList() => _sp.setStringList(spKey, _accounts.map((e) => jsonEncode(e.toJson())).toList());
+  Future<void> _updateAccountList() async =>
+      await _sp.setStringList(spKey, _accounts.map((e) => jsonEncode(e.toJson())).toList());
 
   bool _logging = false;
 
