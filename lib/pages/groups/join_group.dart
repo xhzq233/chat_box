@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:chat_box/controller/api/api_client.dart';
+import 'package:chat_box/controller/message/message_controller.dart';
 import 'package:chat_box/model/group.dart';
 import 'package:chat_box/utils/toast.dart';
 import 'package:chat_box/widgets/app_bar/add_button.dart';
@@ -41,7 +42,8 @@ class _JoinGroupsPageState extends State<JoinGroupsPage> {
 
   void _joinGroup(int id) async {
     try {
-      ApiClient.joinGroup(id);
+      await ApiClient.joinGroup(id);
+      await ChatMessagesController.shared.fetchGroups();
       toast('joined successfully');
       Navigator.pop(context);
     } catch (e) {

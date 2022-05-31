@@ -3,12 +3,14 @@
 import 'dart:math';
 
 import 'package:chat_box/controller/account/account_controller.dart';
+import 'package:chat_box/controller/message/message_controller.dart';
 import 'package:chat_box/utils/toast.dart';
 import 'package:chat_box/widgets/app_bar/add_button.dart';
 import 'package:chat_box/widgets/user/avatar.dart';
 import 'package:chat_box/widgets/user/management_user_avatar.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/app_bar/settings_button.dart';
+import '../global.dart';
+import '../widgets/app_bar/settings_button.dart';
 
 class ConnectPage extends StatelessWidget {
   const ConnectPage({Key? key}) : super(key: key);
@@ -16,6 +18,7 @@ class ConnectPage extends StatelessWidget {
   void _conn(BuildContext context) async {
     final res = await AccountController.shared.login();
     if (res) {
+      await ChatMessagesController.shared.fetchGroups();
       Navigator.pushNamed(context, '/main');
     }
   }
@@ -72,9 +75,9 @@ class ConnectPage extends StatelessWidget {
                   accountName: Text(AccountController.shared.mainAccount!.friendlyName),
                 ),
               ),
-              const Spacer(),
+              Global.defaultSpacing,
               ElevatedButton(onPressed: () => _conn(context), child: const Text('Connect')),
-              const Spacer(),
+              Global.defaultSpacing,
             ],
           ),
         ),

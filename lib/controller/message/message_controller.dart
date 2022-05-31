@@ -56,7 +56,9 @@ class ChatMessagesController extends WidgetsBindingObserver {
     try {
       final List<Group> groups = await ApiClient.getAccountGroups();
       for (final g in groups) {
-        messages[g.id] = ChatListSource(group: g);
+        final source = ChatListSource(group: g);
+        messages[g.id] = source;
+        await source.initData();
         for (final a in g.accounts) {
           initializedAccounts[a.id] = a;
         }
@@ -90,7 +92,6 @@ class ChatMessagesController extends WidgetsBindingObserver {
     log('call startListen');
     if (AccountController.shared.isOnline) {
       _closedByUser = false;
-      fetchGroups();
       socket!.listen(_receive, onError: (e) {
         toast(e.toString());
         log(e.toString());
@@ -119,7 +120,9 @@ class ChatMessagesController extends WidgetsBindingObserver {
       log('unexpected offline while sending message');
     }
   }
+
   bool _closedByUser = false;
+
   void close() {
     if (AccountController.shared.isOnline) {
       _closedByUser = true;

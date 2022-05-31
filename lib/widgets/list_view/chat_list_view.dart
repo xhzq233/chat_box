@@ -11,49 +11,47 @@ class ChatListView extends StatelessWidget {
   final ChatListSource data;
 
   Widget _itemBuilder(BuildContext ctx, int index) {
-    if (index == data.len) {
+    if (index + 1 == (data.len << 1)) {
       if (data.noMore) {
-        return const Center(
-          child: Text('no more history'),
-        );
+        return const HintRow(content: 'No more history. 0.0');
       } else {
         data.loadMore();
-        return const Padding(
-          padding: EdgeInsets.all(10),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const HintRow(content: 'Loading. = =');
       }
     } else {
-      final msg = data[data.len - 1 - index]; //reverse again
-      if (msg.isHint) {
-        return HintRow(content: msg.content);
-      } else if (msg.isImage) {
-        return ImageRow(msg: msg);
+      final i = index >> 1;
+      final msg = data[i]; //reverse again
+      if (index % 2 == 0) {
+        if (msg.isImage) {
+          return ImageRow(msg: msg);
+        } else {
+          return ChatRow(
+            msg: msg,
+          );
+        }
       } else {
-        return ChatRow(
-          msg: msg,
-        );
+        final lastMsg = data[i + 1];//上一条消息
+        if (msg.time.difference(lastMsg.time).inMinutes > 10) {
+          return HintRow(
+              content: '${msg.time.month}.${msg.time.day} ${msg.time.hour}:${msg.time.minute}:${msg.time.second}');
+        } else {
+          return const SizedBox(
+            height: 0,
+            width: 0,
+          );
+        }
       }
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    data.onAddedMessage =
-        () {
+    data.onAddedMessage = () {
       final ele = context as Element;
       if (!ele.dirty) {
         ele.markNeedsBuild();
       }
     };
-    return ListView.builder(
-      itemCount: data.len + 1,
-      itemBuilder: _itemBuilder,
-      reverse: true,
-    );
+    return ListView.builder(itemCount: 2 * data.len, itemBuilder: _itemBuilder, reverse: true);
   }
 }
-

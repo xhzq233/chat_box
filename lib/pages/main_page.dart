@@ -34,7 +34,6 @@ class _ChatGroupsMainPageState extends State<ChatGroupsMainPage> {
 
   void _onTap(ChatListSource source) async {
     ChatMessagesController.shared.currentGroupID = source.group.id; //更改当前群组id
-    await ChatMessagesController.shared.currentChatListSource?.initData();
     await Navigator.pushNamed(context, '/box');
     (context as Element).markNeedsBuild();
   }
@@ -53,10 +52,7 @@ class _ChatGroupsMainPageState extends State<ChatGroupsMainPage> {
                   leading: const Icon(Icons.group_add),
                   title: const Text('No groups here.'),
                   subtitle: const Text('Tap to add more.'),
-                  onTap: () async {
-                    await Navigator.pushNamed(context, '/add_group');
-                    (context as Element).markNeedsBuild();
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/add_group'),
                 )
               : ListView.builder(
                   itemCount: ChatMessagesController.shared.messages.length,

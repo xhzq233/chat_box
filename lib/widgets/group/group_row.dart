@@ -17,7 +17,7 @@ class GroupRow extends StatelessWidget {
       ),
       onTap: () => onTap(source),
       title: Text(source.group.name),
-      subtitle: Text(source.last.content),
+      subtitle: Text(source.newest.content),
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:chat_box/global.dart';
 import 'package:chat_box/pages/main_page.dart';
 import 'package:chat_box/pages/settings/settings_page.dart';
 import 'package:chat_box/pages/update/update_page.dart';
-import 'package:chat_box/pages/user/connect_page.dart';
+import 'package:chat_box/pages/connect_page.dart';
 import 'package:chat_box/pages/groups/join_group.dart';
 import 'package:chat_box/utils/theme/theme_notifier.dart';
 import 'package:flutter/foundation.dart';

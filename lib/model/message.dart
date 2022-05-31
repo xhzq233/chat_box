@@ -20,8 +20,6 @@ class ChatMessage {
   final bool isImage;
   final int repTo;
 
-  bool get isHint => id == 0;
-
   const ChatMessage(
       {required this.content,
       required this.sender,

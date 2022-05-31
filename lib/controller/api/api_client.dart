@@ -71,7 +71,6 @@ class ApiClient {
       Api.messages + '?history=${time.toIso8601String()}&id=$inGroup',
     );
     final data = <ChatMessage>[];
-    log(response.data.runtimeType.toString());
     for (dynamic i in jsonDecode(response.data)) {
       data.add(ChatMessage.fromJson(i));
     }
