@@ -1,7 +1,6 @@
 /// chat_box - more_action
 /// Created by xhz on 08/05/2022
 import 'package:chat_box/global.dart';
-import 'package:chat_box/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 
 //must be placed in stack view
@@ -18,7 +17,7 @@ class MoreActionsPopUpView extends StatefulWidget {
   final double? height;
   final Offset preferredPosition;
   final double width; //prefer 0.618 * height
-  final List<Pair<String, VoidCallback>> actions;
+  final Map<String, VoidCallback> actions;
 
   @override
   State<MoreActionsPopUpView> createState() => _MoreActionsPopUpViewState();
@@ -77,22 +76,23 @@ class _MoreActionsPopUpViewState extends State<MoreActionsPopUpView> {
   @override
   Widget build(BuildContext context) {
     final animatedWidth = width * 0.8 + animation.value * 0.2 * width;
+    int index = 0;
     return Positioned(
         top: position.dy,
         left: position.dx,
-        child: Container(
+        width:animatedWidth ,
+        height: height * 0.4 + animation.value * height * 0.6,
+        child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: Global.cbOthersBubbleBackground,
           ),
-          width: animatedWidth,
-          height: height * 0.4 + animation.value * height * 0.6,
           child: Stack(alignment: Alignment.center, children: [
-            for (int i = 0; i < len; i++)
+            for (final item in widget.actions.entries)
               Positioned(
-                  top: height * i / len * animation.value,
+                  top: height * (index++) / len * animation.value,
                   width: width,
-                  child: _buildItem(widget.actions[i].first, widget.actions[i].second))
+                  child: _buildItem(item.key, item.value))
           ]),
         ));
   }

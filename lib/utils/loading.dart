@@ -12,11 +12,14 @@ class Loading {
   static final _entry = OverlayEntry(
     builder: (_) => Container(
         color: Colors.black12,
-        child: const Center(
-          child: CircularProgressIndicator(),
+        child: const RepaintBoundary(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
         )),
   );
   static bool _showing = false;
+
   static void show() {
     if (_showing) return;
     GlobalOverlayContext.overlayState!.insert(_entry);

@@ -4,6 +4,7 @@ import 'package:chat_box/controller/account/account_controller.dart';
 import 'package:chat_box/widgets/app_bar/add_group.dart';
 import 'package:chat_box/widgets/group/group_row.dart';
 import 'package:flutter/material.dart';
+import '../controller/api/api_client.dart';
 import '../controller/message/message_controller.dart';
 import '../widgets/app_bar/settings_button.dart';
 import '../widgets/list_view/chat_list_source.dart';
@@ -38,6 +39,15 @@ class _ChatGroupsMainPageState extends State<ChatGroupsMainPage> {
     (context as Element).markNeedsBuild();
   }
 
+  void _onTriggerLeaveGroup(ChatListSource source) async {
+    try {
+      await ApiClient.leaveGroup(source.group.id);
+    } catch (_) {
+      return;
+    }
+    (context as Element).markNeedsBuild();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +71,7 @@ class _ChatGroupsMainPageState extends State<ChatGroupsMainPage> {
                     return GroupRow(
                       source: ChatMessagesController.shared.messages.values.elementAt(index),
                       onTap: _onTap,
+                      onTriggerLeaveGroup: _onTriggerLeaveGroup,
                     );
                   },
                 ),

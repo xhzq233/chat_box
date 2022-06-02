@@ -1,7 +1,5 @@
 /// chat_box - welcome_page
 /// Created by xhz on 22/04/2022
-import 'dart:developer';
-
 import 'package:chat_box/utils/auto_request_node.dart';
 import 'package:chat_box/pages/welcome_page/controller.dart';
 import 'package:chat_box/widgets/app_bar/settings_button.dart';
@@ -19,16 +17,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   late final _controller = WelcomePageController()..context = context;
-  static const List<String> sayings = [
-    'Ready to Connect?',
-    'The proletarians have nothing to lose but their chains.',
-    'Let the ruling classes tremble at a Communistic revolution.',
-    'xhzq\'s masterpiece.',
-    'Long live the Communist Party!',
-    'Ready to enter the new world.',
-    'Workers of the world, unite!',
-    'Proletarier aller Länder vereinigt Euch!',
-  ];
 
   @override
   Widget build(BuildContext context) {

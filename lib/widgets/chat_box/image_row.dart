@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:chat_box/controller/api/api.dart';
 import 'package:chat_box/model/message.dart';
 import 'package:chat_box/utils/utils.dart';
@@ -98,10 +97,11 @@ class _ContextFloatableImage extends StatelessWidget {
                   barrierColor: Colors.transparent,
                   transitionDuration: const Duration(milliseconds: 300),
                   transitionBuilder: (_, animation, __, child) {
+                    animation = CurvedAnimation(parent: animation, curve: Curves.ease);
                     final gussValue = 2 + 3 * animation.value;
-                    // final scaleValue = 1 + animation.value * 0.12;
-                    // final trans = Matrix4(scaleValue, 0, 0, 0, 0, scaleValue, 0, 0, 0, 0, 1, 0, imageOriginInGlobal.dx,
-                    //     imageOriginInGlobal.dy, 0, 1);
+                    final scaleValue = 1 + animation.value * 0.12;
+                    final trans = Matrix4(scaleValue, 0, 0, 0, 0, scaleValue, 0, 0, 0, 0, 1, 0, imageOriginInGlobal.dx,
+                        imageOriginInGlobal.dy, 0, 1);
                     return Stack(
                       children: [
                         GestureDetector(
@@ -113,30 +113,30 @@ class _ContextFloatableImage extends StatelessWidget {
                             ),
                           ),
                         ),
+                        Transform(
+                          alignment: Alignment.center,
+                          transform: trans,
+                          child: img,
+                        ),
                         child
                       ],
                     );
                   },
-                  pageBuilder: (_, animation, ___) {
-                    animation = CurvedAnimation(parent: animation, curve: Curves.ease);
+                  pageBuilder: (_, __, ___) {
                     return Stack(
                       children: [
-                        ScaleTransition(
-                          scale: Tween(begin: 1.0, end: 1.2).animate(animation),
-                          child: img,
-                        ),
                         MoreActionsPopUpView(
-                            animation: animation,
-                            actions: [
-                              Pair('Save', () async {
+                            animation: CurvedAnimation(parent: __, curve: Curves.ease),
+                            actions: {
+                              'Save': () async {
                                 PlatformApi.saveImage((await get(Uri.parse(url))).bodyBytes, msg.content);
-                              }),
-                              Pair('Share', () async {
-                                toast('Not support yet');
-                              }),
-                            ],
-                            preferredPosition: Offset(imageOriginInGlobal.dy + imageSize.height * 1.06,
-                                imageOriginInGlobal.dx + imageSize.width * 1.06)),
+                              },
+                              'Share': () => toast('not supported yet')
+                            },
+                            preferredPosition: Offset(
+                              imageOriginInGlobal.dx + imageSize.width * 1.06,
+                              imageOriginInGlobal.dy + imageSize.height * 1.06,
+                            )),
                       ],
                     );
                   }));

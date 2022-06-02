@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_box/utils/utils.dart';
 import 'package:chat_box/pages/welcome_page/welcome_page.dart';
+import 'package:flutter/rendering.dart';
 import 'controller/api/api.dart';
 
 void checkV(BuildContext context) async {
@@ -28,6 +29,8 @@ void main() async {
   if (defaultTargetPlatform == TargetPlatform.android) {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   }
+  // debugPaintSizeEnabled = true;
+  debugRepaintRainbowEnabled = true;
   PlatformApi.setSelectNotificationCallback((payload) {
     log('$payload');
   });

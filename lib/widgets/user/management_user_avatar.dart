@@ -1,7 +1,6 @@
 /// chat_box - manangement_user_avatar
 /// Created by xhz on 30/05/2022
 import 'package:chat_box/controller/account/account_controller.dart';
-import 'package:chat_box/utils/toast.dart';
 import 'package:flutter/material.dart';
 import '../../model/account.dart';
 import 'avatar.dart';
@@ -24,16 +23,16 @@ class ManagementUserAvatar extends UserAvatar {
                       children: [
                         MoreActionsPopUpView(
                             animation: CurvedAnimation(parent: animation, curve: Curves.ease),
-                            actions: [
-                              Pair('Set Main', () {
+                            actions: {
+                              'Set Main': () {
                                 AccountController.shared.changeMainAccount(account.id);
                                 onSuccessfullyChanged?.call(_);
-                              }),
-                              Pair('Delete', () {
+                              },
+                              'Delete': () {
                                 AccountController.shared.removeAccount(account.id);
                                 onSuccessfullyChanged?.call(_);
-                              }),
-                            ],
+                              }
+                            },
                             preferredPosition: detail.globalPosition),
                       ],
                     )));
