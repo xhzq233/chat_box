@@ -25,11 +25,10 @@ class _ChatBoxState extends State<ChatBox> {
 
   late final _listView = ChatListView(data: source);
 
-  final ChatListSource source = ChatMessagesController.shared.currentChatListSource ?? exit(0);
+  ChatListSource get source => ChatMessagesController.shared.currentChatListSource!;
 
   @override
   Widget build(BuildContext context) {
-    log('current _ChatBoxState $hashCode');
     return Scaffold(
       appBar: AppBar(
         title: Text(source.group.name),

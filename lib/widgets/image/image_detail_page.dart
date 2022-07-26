@@ -2,7 +2,9 @@
 /// Created by xhz on 03/05/2022
 import 'dart:developer';
 import 'package:chat_box/controller/api/api.dart';
+import 'package:chat_box/utils/toast.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chat_box/global.dart';
@@ -21,43 +23,31 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
   late void Function() _animationListener;
   Animation<double>? _animation;
 
-  // final menuHeight = Global.screenHeight * 0.618;
   final threeStage = [Global.screenHeight * 1.0, Global.screenHeight * 0.618, Global.screenHeight * 0.382];
-
-  // late final disFromTop = Global.screenHeight - menuHeight;
 
   double _top = Global.screenHeight;
   double _dragStartPoint = 0;
   double _dragEndPoint = 0;
 
   void _onDragEnd(double dy, [Velocity? velocity]) {
-    log('velocity $velocity');
+    // log('$dy, $velocity');
     if (dy == 0) return;
     _animationController.removeListener(_animationListener);
     _animationController.stop();
     _animationController.reset();
-    final double end;
+    final double end; //最后停留位置
     if (dy > 0) {
       if ((dy > 15 && (velocity?.pixelsPerSecond.dy ?? 0) > 1000) || (dy > 80)) {
         end = threeStage[0];
-      } else if (((dy > 8 && (velocity?.pixelsPerSecond.dy ?? 0) > 500) || (dy > 60))) {
-        end = threeStage[1];
       } else {
         end = threeStage[2];
       }
     } else {
-      if ((dy < -15 && (velocity?.pixelsPerSecond.dy ?? 0) > 1000) || (dy < -80)) {
-        end = threeStage[0];
-      } else if (((dy < -8 && (velocity?.pixelsPerSecond.dy ?? 0) > 500) || (dy < -60))) {
-        end = threeStage[1];
-      } else {
+      if ((dy < -15 && (velocity?.pixelsPerSecond.dy ?? 0) < -1000) || (dy < -80)) {
         end = threeStage[2];
+      } else {
+        end = threeStage[0];
       }
-      // if (dy < -50) {
-      //   end = threeStage[2];
-      // } else {
-      //   end = threeStage[0];
-      // }
     }
     final begin = _top;
     _animationListener = () {
@@ -98,17 +88,15 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
         0,
         0,
         1,
-        0.001,
+        0.0008,
         //表示每1000个pixel, 1/scale=1/(scale+1)
         0,
         0,
         0,
         1)
-      ..scale(_top / Global.screenHeight * 0.4 + 0.6, _top / Global.screenHeight * 0.4 + 0.6)
+      ..scale(_top / Global.screenHeight * 0.3 + 0.7, _top / Global.screenHeight * 0.3 + 0.7)
       ..rotateX(0.5 - _top / Global.screenHeight / 2)
-      ..translate(-Global.screenWidth / 2, -Global.screenHeight / 2 - (1 - _top / Global.screenHeight) * 100);
-    final m = Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, Global.screenWidth / 2, Global.screenHeight / 2, 0, 1)
-        .multiplied(mx); //alignment.Center 变换
+      ..translate(0.0, (_top / Global.screenHeight - 1) * 100);
 
     final img = ExtendedImage.network(
       Api.getImageUrl + widget.name,
@@ -178,55 +166,74 @@ class _ImageDetailPageState extends State<ImageDetailPage> with SingleTickerProv
       fit: BoxFit.fitWidth, //尽量保持原有分辨率
     );
 
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: () async {
-            // if (_top - menuHeight < 0.1) {
-            //   await _animationController.reverse();
-            // }
-            Navigator.pop(context);
-          },
-          child: Transform(
-            transform: m,
-            // alignment: FractionalOffset.center,
-            child: Hero(tag: widget.heroTag, child: img),
-          ),
-        ),
-        Positioned(
-            top: _top - 15,
-            left: 0,
-            right: 0,
-            height: threeStage[1] + 64,
-            child: GestureDetector(
-              onVerticalDragStart: (detail) {
-                // log('start ${detail.globalPosition}');
-                _dragStartPoint = detail.globalPosition.dy;
-              },
-              onVerticalDragUpdate: (detail) {
-                if (_top < threeStage[2] - 15 && detail.delta.dy < 0) return;
-                _top += detail.delta.dy;
-                _dragEndPoint = detail.globalPosition.dy;
-                (context as Element).markNeedsBuild();
-              },
-              onVerticalDragEnd: (detail) {
-                _onDragEnd(_dragEndPoint - _dragStartPoint, detail.velocity);
-              },
-              onVerticalDragCancel: () {
-                _onDragEnd(_dragEndPoint - _dragStartPoint);
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                padding: const EdgeInsets.all(15),
-                decoration: const BoxDecoration(
-                    color: Global.cbOthersBubbleBackground,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-                child: Column(
-                  children: [FlutterLogo(), FlutterLogo()],
-                ),
-              ),
-            ))
-      ],
-    );
+    return GestureDetector(
+        onTap: () async {
+          Navigator.pop(context);
+        },
+        onVerticalDragStart: (detail) {
+          _dragStartPoint = detail.globalPosition.dy;
+        },
+        onVerticalDragUpdate: (detail) {
+          if (_top < threeStage[2] && detail.delta.dy < 0) return;
+          _top += detail.delta.dy;
+          _dragEndPoint = detail.globalPosition.dy;
+          (context as Element).markNeedsBuild();
+        },
+        onVerticalDragEnd: (detail) {
+          _onDragEnd(_dragEndPoint - _dragStartPoint, detail.velocity);
+        },
+        onVerticalDragCancel: () {
+          _onDragEnd(_dragEndPoint - _dragStartPoint);
+        },
+        child: Stack(
+          children: [
+            Transform(
+              transform: mx,
+              alignment: FractionalOffset.center,
+              child: Hero(tag: widget.heroTag, child: img),
+            ),
+            Positioned(
+                top: _top - 15,
+                left: 0,
+                right: 0,
+                height: threeStage[1] + 64,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.all(15),
+                  decoration: const BoxDecoration(
+                      color: Global.cbOthersBubbleBackground,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CupertinoContextMenuAction(
+                        child: const Text('Save this image'),
+                        onPressed: () {},
+                        trailingIcon: CupertinoIcons.tray_arrow_down,
+                      ),
+                      CupertinoContextMenuAction(
+                        child: const Text('Forward'),
+                        onPressed: () {
+                          toast('Forward');
+                        },
+                        trailingIcon: CupertinoIcons.arrowshape_turn_up_right,
+                      ),
+                      CupertinoContextMenuAction(
+                        child: const Text('Delete'),
+                        isDestructiveAction: true,
+                        onPressed: () {},
+                        trailingIcon: CupertinoIcons.trash,
+                      ),
+                      CupertinoContextMenuAction(
+                        child: const Text('Report sensitive content'),
+                        isDestructiveAction: true,
+                        onPressed: () {},
+                        trailingIcon: CupertinoIcons.exclamationmark_triangle,
+                      ),
+                    ],
+                  ),
+                ))
+          ],
+        ));
   }
 }

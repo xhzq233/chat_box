@@ -27,10 +27,6 @@ class SettingsPage extends StatelessWidget {
               builder: (ctx) => Switch.adaptive(
                   value: isSys,
                   onChanged: (to) async {
-                    // final RenderBox? box = ctx.findRenderObject() as RenderBox?;
-                    // final offset = box?.globalToLocal(Offset.zero) ?? Offset.zero;
-                    // await Navigator.pushReplacement(context,
-                    //     buildTransitionRoute(Theme(data: Global.darkTheme, child: const SettingsPage()), offset));
                     ThemeNotifier.shared.value = to ? ThemeMode.system : ThemeMode.dark;
                     (context as Element).markNeedsBuild();
                   }),
@@ -47,9 +43,6 @@ class SettingsPage extends StatelessWidget {
                         : (to) {
                             ThemeNotifier.shared.value = to ? ThemeMode.dark : ThemeMode.light;
                             (context as Element).markNeedsBuild();
-                            // final RenderBox? box = ctx.findRenderObject() as RenderBox?;
-                            // final offset = box?.globalToLocal(Offset.zero) ?? Offset.zero;
-                            // Navigator.pushReplacement(context, buildTransitionRoute(const SettingsPage(), offset));
                           })),
           ),
         ],

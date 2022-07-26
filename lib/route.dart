@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:chat_box/global.dart';
 import 'package:flutter/material.dart';
 
-PageRouteBuilder<T> buildTransitionRoute<T>(Widget widget, Offset offset) {
+PageRouteBuilder<T> buildWaveTransitionRoute<T>(Widget widget, Offset offset) {
   final Size size = Global.screenSize;
   final double circleRadius;
   if (offset.dx > size.width / 2) {
